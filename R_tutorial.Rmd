@@ -1,0 +1,128 @@
+---
+title: "Working with Bigwig files in R"
+author: "Omid Gholamalamdari"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Importing BigWig files to R
+I use rtacklayer package which is part of Bioconductor package manager to import BigWigs to R.
+```{r install-libraries, message=FALSE}
+# How to install libs
+# if (!requireNamespace("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# BiocManager::install("rtracklayer", version = "3.8")
+# BiocManager::install("GenomicRanges", version = "3.8")
+
+library(rtracklayer)
+library(GenomicRanges)
+```
+
+## Import function
+Let's downoad a K562 H3K4me3 BW from Encode and import it to R. 
+import() function of the rtracklayer imports a genomic file(i.e BW, bed, bedgraph, ...) as a GenomicRanges object into R. 
+You can read more about GenomicRanges [here](https://www.bioconductor.org/packages/release/bioc/vignettes/GenomicRanges/inst/doc/GenomicRangesIntroduction.html).
+
+```{r download_bw,eval=FALSE  }
+download.file("https://www.encodeproject.org/files/ENCFF352VRB/@@download/ENCFF352VRB.bigWig",destfile = "sample_file/k562_h3k4me3.bw")
+```
+Examining the file shows a range and score. Score is the height in BW file.
+```{r}
+k562.h3k4me3<-import("sample_file/k562_h3k4me3.bw")
+head(k562.h3k4me3)
+```
+
+##Binning function
+This is a function to bin genomic data, it gets a BW (as GenomicRanges object) and bins it. 
+The default is 20kb bins. 
+```{r BW_bnr}
+BW_bnr<-function(BW,bin=2e4){
+  #gets a BE i GenomicRanges and bin it over fixed distances
+  require(rtracklayer)
+  require(GenomicRanges)
+  bins<-tileGenome(seqinfo(BW),tilewidth = bin,cut.last.tile.in.chrom = TRUE)
+  BW_Rle<-coverage(BW,weight="score")
+  BW_bin<-binnedAverage(bins,BW_Rle,"score")
+  return(BW_bin)
+}
+```
+
+
+```{r bin_bw}
+k562.h3k4me3.2e4<-BW_bnr(k562.h3k4me3,bin=2e4) 
+# You can also export it and see how it looks.
+export(k562.h3k4me3.2e4,"sample_file/k562_h3k4me3_20kb.bw")
+
+```
+Note that the range sizes are in 20kb increments
+```{r}
+head(k562.h3k4me3)
+```
+
+Let's import another bigwig file, a son_k562_tsa
+```{r}
+k562.tsa<-import("sample_file/k562_c1r1_20k_mw20k_hg38.bw")
+head(k562.tsa)
+```
+
+Note that the ranges are 20kb as before but the starting point is diiferent. You need to make them uniform.
+You also need to make sure the total number of bins are same. 
+
+```{r}
+k562.tsa
+```
+
+```{r}
+k562.h3k4me3.2e4
+```
+
+As you can see above the number of ranges in each object is different (i.e one has a longer genome, weird right?), the reason for such descripancy is because bw files don't store chromosome information (like length) and binning things like I did but there are ways to get around it.
+After you solved this problem you can merge the score field of these Genomic ranges and create your matrix. 
+Here is one approach to make the bw files similar in length. But you need to tweak it a bit to work for you.
+```{r}
+higlass_file_prep<-function(bw_path,genome){
+  library(rtracklayer)
+  library(GenomeInfoDb)
+  
+  # Importing the proper negspy genome file
+  gnm_file<-tempfile(pattern = "",fileext = ".txt")
+  if (genome=="hg38"){
+    chrom.sizes.path<-"https://raw.githubusercontent.com/omidalam/negspy/master/negspy/data/hg38/chromInfo.txt"
+    download.file(url = chrom.sizes.path,destfile = gnm_file)
+  }else if(genome=="hg19"){
+    chrom.sizes.path<-"https://raw.githubusercontent.com/omidalam/negspy/master/negspy/data/hg19/chromInfo.txt"
+    download.file(url = chrom.sizes.path, destfile = gnm_file)
+  }
+  gnm<-read.table(gnm_file)
+  
+  # Import the original bw
+  bw<-import(bw_path)
+  
+  # Select the valid chromosomes in the original BW
+  valids<-(bw[seqnames(bw)%in%as.character(gnm$V1)])
+  valids<-valids[!is.na(valids$score)]
+  # Clip the bedgraph based on the negspy genopme
+  bedgraph<-tempfile(pattern = 'bg',fileext = ".bedGraph")
+  bedgraph_clipped<-tempfile(pattern = 'bg',fileext = ".bedGraph")
+
+  export(valids,con = bedgraph)
+  clip_command<-paste("bedClip",bedgraph,gnm_file,bedgraph_clipped)
+  system(clip_command)
+  
+  # Convert the bedGraph to bigwig
+  bw_exp_path<-paste(tools::file_path_sans_ext(bw_path),"_negpy_",genome,".bw",sep='')
+  bw_command<-paste("bedGraphToBigWig",bedgraph_clipped,gnm_file,bw_exp_path)
+  system(bw_command)
+}
+```
+
+Once you have all these information in proper format you can combine them like this. But they should have correct number of ranges for each chromosome. In the below example that I'm adding another column to the original k562_tsa data. As you can see it has two columns now.
+```{r}
+k562.tsa$enrichment<-k562.tsa$score^2
+head(k562.tsa)
+```
+After all these you can extract the all the data like this.
+```{r}
+mcols(k562.tsa)
+```
