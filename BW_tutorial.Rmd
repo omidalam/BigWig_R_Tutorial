@@ -1,13 +1,11 @@
 ---
 title: "Working with Bigwig files in R"
 author: "Omid Gholamalamdari"
-output:
-  html_document:
-    df_print: paged
+output: rmarkdown::github_document
 ---
 
 # Importing BigWig files to R
-I use rtacklayer package which is part of Bioconductor package manager to import BigWigs to R.
+I use rtacklayer package which is part of Bioconductor to import BigWigs to R.
 ```{r install-libraries, message=FALSE}
 # How to install libs
 # if (!requireNamespace("BiocManager", quietly = TRUE))
