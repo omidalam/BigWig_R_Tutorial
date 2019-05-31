@@ -1526,9 +1526,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type="text/css">
 .main-container {
@@ -1559,8 +1557,6 @@ summary {
 </style>
 
 
-
-<div class="container-fluid main-container">
 
 <!-- tabsets -->
 
@@ -1635,13 +1631,22 @@ $(document).ready(function () {
 
 
 
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
 
 <div class="fluid-row" id="header">
 
 
 
 <h1 class="title toc-ignore">Working with Bigwig files in R</h1>
-<h4 class="author"><em>Omid Gholamalamdari</em></h4>
+<h4 class="author">Omid Gholamalamdari</h4>
 
 </div>
 
@@ -1659,20 +1664,18 @@ library(rtracklayer)
 library(GenomicRanges)</code></pre>
 <div id="import-function" class="section level2">
 <h2>Import function</h2>
-<p>Let’s downoad a K562 H3K4me3 BW from Encode and import it to R. import() function of the rtracklayer imports a genomic file(i.e BW, bed, bedgraph, …) as a GenomicRanges object into R. You can read more about GenomicRanges <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/GenomicRanges/inst/doc/GenomicRangesIntroduction.html">here</a>.</p>
-<pre class="r"><code>download.file(&quot;https://www.encodeproject.org/files/ENCFF352VRB/@@download/ENCFF352VRB.bigWig&quot;,destfile = &quot;sample_file/k562_h3k4me3.bw&quot;)</code></pre>
-<p>Examining the file shows a range and score. Score is the height in BW file.</p>
-<pre class="r"><code>k562.h3k4me3&lt;-import(&quot;sample_file/k562_h3k4me3.bw&quot;)
+<p>Let’s downoad a K562 H3K4me3 BW from Encode and import it to R. import() function of the rtracklayer imports a genomic file(i.e BW, bed, bedgraph, …) as a GenomicRanges object into R. You can read more about GenomicRanges <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/GenomicRanges/inst/doc/GenomicRangesIntroduction.html">here</a>. Examining the file shows a range and score. Score is the height in BW plot over the specified range.</p>
+<pre class="r"><code>k562.h3k4me3&lt;-import(&quot;./sample_file/k562_h3k4me3_20kb.bw&quot;)
 head(k562.h3k4me3)</code></pre>
 <pre><code>## GRanges object with 6 ranges and 1 metadata column:
-##       seqnames      ranges strand |             score
-##          &lt;Rle&gt;   &lt;IRanges&gt;  &lt;Rle&gt; |         &lt;numeric&gt;
-##   [1]     chr1     1-61088      * |                 0
-##   [2]     chr1 61089-61308      * | 0.461459994316101
-##   [3]     chr1 61309-66359      * |                 0
-##   [4]     chr1 66360-66579      * | 0.461459994316101
-##   [5]     chr1 66580-82912      * |                 0
-##   [6]     chr1 82913-82927      * | 0.461459994316101
+##       seqnames        ranges strand |              score
+##          &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; |          &lt;numeric&gt;
+##   [1]     chr1       1-20000      * |                  0
+##   [2]     chr1   20001-40000      * |                  0
+##   [3]     chr1   40001-60000      * |                  0
+##   [4]     chr1   60001-80000      * | 0.0101521201431751
+##   [5]     chr1  80001-100000      * | 0.0253790691494942
+##   [6]     chr1 100001-120000      * | 0.0456807799637318
 ##   -------
 ##   seqinfo: 128 sequences from an unspecified genome</code></pre>
 <p>##Binning function This is a function to bin genomic data, it gets a BW (as GenomicRanges object) and bins it. The default is 20kb bins.</p>
@@ -1691,14 +1694,14 @@ export(k562.h3k4me3.2e4,&quot;sample_file/k562_h3k4me3_20kb.bw&quot;)</code></pr
 <p>Note that the range sizes are in 20kb increments</p>
 <pre class="r"><code>head(k562.h3k4me3)</code></pre>
 <pre><code>## GRanges object with 6 ranges and 1 metadata column:
-##       seqnames      ranges strand |             score
-##          &lt;Rle&gt;   &lt;IRanges&gt;  &lt;Rle&gt; |         &lt;numeric&gt;
-##   [1]     chr1     1-61088      * |                 0
-##   [2]     chr1 61089-61308      * | 0.461459994316101
-##   [3]     chr1 61309-66359      * |                 0
-##   [4]     chr1 66360-66579      * | 0.461459994316101
-##   [5]     chr1 66580-82912      * |                 0
-##   [6]     chr1 82913-82927      * | 0.461459994316101
+##       seqnames        ranges strand |              score
+##          &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; |          &lt;numeric&gt;
+##   [1]     chr1       1-20000      * |                  0
+##   [2]     chr1   20001-40000      * |                  0
+##   [3]     chr1   40001-60000      * |                  0
+##   [4]     chr1   60001-80000      * | 0.0101521201431751
+##   [5]     chr1  80001-100000      * | 0.0253790691494942
+##   [6]     chr1 100001-120000      * | 0.0456807799637318
 ##   -------
 ##   seqinfo: 128 sequences from an unspecified genome</code></pre>
 <p>Let’s import another bigwig file, a son_k562_tsa</p>
@@ -1740,8 +1743,8 @@ head(k562.tsa)</code></pre>
 ##        [1]     chr1           1-20000      * |                  0
 ##        [2]     chr1       20001-40000      * |                  0
 ##        [3]     chr1       40001-60000      * |                  0
-##        [4]     chr1       60001-80000      * | 0.0101521198749542
-##        [5]     chr1      80001-100000      * | 0.0253790698498487
+##        [4]     chr1       60001-80000      * | 0.0101521201431751
+##        [5]     chr1      80001-100000      * | 0.0253790691494942
 ##        ...      ...               ...    ... .                ...
 ##   [155027]     chrY 57140001-57160000      * |                  0
 ##   [155028]     chrY 57160001-57180000      * |                  0

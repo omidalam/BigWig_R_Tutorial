@@ -23,13 +23,9 @@ library(GenomicRanges)
 Let's downoad a K562 H3K4me3 BW from Encode and import it to R. 
 import() function of the rtracklayer imports a genomic file(i.e BW, bed, bedgraph, ...) as a GenomicRanges object into R. 
 You can read more about GenomicRanges [here](https://www.bioconductor.org/packages/release/bioc/vignettes/GenomicRanges/inst/doc/GenomicRangesIntroduction.html).
-
-```{r download_bw,eval=FALSE  }
-download.file("https://www.encodeproject.org/files/ENCFF352VRB/@@download/ENCFF352VRB.bigWig",destfile = "sample_file/k562_h3k4me3.bw")
-```
-Examining the file shows a range and score. Score is the height in BW file.
+Examining the file shows a range and score. Score is the height in BW plot over the specified range.
 ```{r}
-k562.h3k4me3<-import("sample_file/k562_h3k4me3.bw")
+k562.h3k4me3<-import("./sample_file/k562_h3k4me3_20kb.bw")
 head(k562.h3k4me3)
 ```
 
