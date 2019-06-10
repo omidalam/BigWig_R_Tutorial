@@ -1649,6 +1649,8 @@ $(document).ready(function () {
 </div>
 
 
+<div id="for-shifting-beds" class="section level2">
+<h2>For shifting BEDs</h2>
 <p>Import sample BED. If your BED has more than 3 columns (check it with head file.bed in terminal) This won’t work! Don’t know why!</p>
 <pre class="r"><code>bed&lt;-import(&quot;./sample_file/H3K4me3_ENCFF148POZ_hg38.bed&quot;)
 head(bed,10)</code></pre>
@@ -1668,7 +1670,7 @@ head(bed,10)</code></pre>
 ##   -------
 ##   seqinfo: 39 sequences from an unspecified genome; no seqlengths</code></pre>
 <p>1- I will use subsetting to extract some of the beds. 2- shift them some number. 3- And replace it.</p>
-<pre class="r"><code>number_to_shift=2e5 ##200kb
+<pre class="r"><code>number_to_shift=7e2 ##200kb
 
 
 shifted_beds&lt;-shift(bed[(seqnames(bed)==&quot;chr1&quot;)&amp;start(bed)&gt;=779600&amp;start(bed)&lt;=1e6],number_to_shift)
@@ -1676,22 +1678,238 @@ shifted_beds&lt;-shift(bed[(seqnames(bed)==&quot;chr1&quot;)&amp;start(bed)&gt;=
 bed[(seqnames(bed)==&quot;chr1&quot;)&amp;start(bed)&gt;=779600&amp;start(bed)&lt;=1e6]&lt;-shifted_beds
 head(bed,10)</code></pre>
 <pre><code>## GRanges object with 10 ranges and 0 metadata columns:
-##        seqnames          ranges strand
-##           &lt;Rle&gt;       &lt;IRanges&gt;  &lt;Rle&gt;
-##    [1]     chr1   138928-139177      *
-##    [2]     chr1   777765-778150      *
-##    [3]     chr1   778414-778790      *
-##    [4]     chr1   778868-779407      *
-##    [5]     chr1   979602-980030      *
-##    [6]     chr1 1017237-1017434      *
-##    [7]     chr1 1026687-1026955      *
-##    [8]     chr1 1027303-1027567      *
-##    [9]     chr1 1069987-1070184      *
-##   [10]     chr1 1103952-1105373      *
+##        seqnames        ranges strand
+##           &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt;
+##    [1]     chr1 138928-139177      *
+##    [2]     chr1 777765-778150      *
+##    [3]     chr1 778414-778790      *
+##    [4]     chr1 778868-779407      *
+##    [5]     chr1 780302-780730      *
+##    [6]     chr1 817937-818134      *
+##    [7]     chr1 827387-827655      *
+##    [8]     chr1 828003-828267      *
+##    [9]     chr1 870687-870884      *
+##   [10]     chr1 904652-906073      *
 ##   -------
 ##   seqinfo: 39 sequences from an unspecified genome; no seqlengths</code></pre>
 <p>Note that idices&gt;5 has been shifted</p>
 <pre class="r"><code>export(bed,&quot;./sample_file/shifted.bed&quot;)</code></pre>
+</div>
+<div id="for-gff-files" class="section level2">
+<h2>For GFF files</h2>
+<pre class="r"><code>gff&lt;-import(&quot;./sample_file/Homo_sapiens.GRCh38.96.chromosome.20.gff3&quot;)
+head(gff,10)</code></pre>
+<pre><code>## GRanges object with 10 ranges and 24 metadata columns:
+##        seqnames      ranges strand |         source       type     score
+##           &lt;Rle&gt;   &lt;IRanges&gt;  &lt;Rle&gt; |       &lt;factor&gt;   &lt;factor&gt; &lt;numeric&gt;
+##    [1]       20  1-64444167      * |        Ensembl chromosome      &lt;NA&gt;
+##    [2]       20 87250-97094      + | ensembl_havana       gene      &lt;NA&gt;
+##    [3]       20 87250-97094      + |         havana    lnc_RNA      &lt;NA&gt;
+##    [4]       20 87250-87359      + |         havana       exon      &lt;NA&gt;
+##    [5]       20 96005-97094      + |         havana       exon      &lt;NA&gt;
+##    [6]       20 87710-96533      + | ensembl_havana       mRNA      &lt;NA&gt;
+##    [7]       20 87710-87767      + | ensembl_havana       exon      &lt;NA&gt;
+##    [8]       20 87710-87767      + | ensembl_havana        CDS      &lt;NA&gt;
+##    [9]       20 96005-96417      + | ensembl_havana        CDS      &lt;NA&gt;
+##   [10]       20 96005-96533      + | ensembl_havana       exon      &lt;NA&gt;
+##            phase                         ID                         Alias
+##        &lt;integer&gt;                &lt;character&gt;               &lt;CharacterList&gt;
+##    [1]      &lt;NA&gt;              chromosome:20 CM000682.2,chr20,NC_000020.11
+##    [2]      &lt;NA&gt;       gene:ENSG00000178591                              
+##    [3]      &lt;NA&gt; transcript:ENST00000608838                              
+##    [4]      &lt;NA&gt;                       &lt;NA&gt;                              
+##    [5]      &lt;NA&gt;                       &lt;NA&gt;                              
+##    [6]      &lt;NA&gt; transcript:ENST00000382410                              
+##    [7]      &lt;NA&gt;                       &lt;NA&gt;                              
+##    [8]         0        CDS:ENSP00000371847                              
+##    [9]         2        CDS:ENSP00000371847                              
+##   [10]      &lt;NA&gt;                       &lt;NA&gt;                              
+##                   Name              biotype
+##            &lt;character&gt;          &lt;character&gt;
+##    [1]            &lt;NA&gt;                 &lt;NA&gt;
+##    [2]         DEFB125       protein_coding
+##    [3]     DEFB125-202 processed_transcript
+##    [4] ENSE00003702629                 &lt;NA&gt;
+##    [5] ENSE00003705060                 &lt;NA&gt;
+##    [6]     DEFB125-201       protein_coding
+##    [7] ENSE00001491993                 &lt;NA&gt;
+##    [8]            &lt;NA&gt;                 &lt;NA&gt;
+##    [9]            &lt;NA&gt;                 &lt;NA&gt;
+##   [10] ENSE00001491984                 &lt;NA&gt;
+##                                                  description
+##                                                  &lt;character&gt;
+##    [1]                                                  &lt;NA&gt;
+##    [2] defensin beta 125 [Source:HGNC Symbol;Acc:HGNC:18105]
+##    [3]                                                  &lt;NA&gt;
+##    [4]                                                  &lt;NA&gt;
+##    [5]                                                  &lt;NA&gt;
+##    [6]                                                  &lt;NA&gt;
+##    [7]                                                  &lt;NA&gt;
+##    [8]                                                  &lt;NA&gt;
+##    [9]                                                  &lt;NA&gt;
+##   [10]                                                  &lt;NA&gt;
+##                gene_id          logic_name     version
+##            &lt;character&gt;         &lt;character&gt; &lt;character&gt;
+##    [1]            &lt;NA&gt;                &lt;NA&gt;        &lt;NA&gt;
+##    [2] ENSG00000178591 ensembl_havana_gene           6
+##    [3]            &lt;NA&gt;                &lt;NA&gt;           1
+##    [4]            &lt;NA&gt;                &lt;NA&gt;           1
+##    [5]            &lt;NA&gt;                &lt;NA&gt;           1
+##    [6]            &lt;NA&gt;                &lt;NA&gt;           2
+##    [7]            &lt;NA&gt;                &lt;NA&gt;           1
+##    [8]            &lt;NA&gt;                &lt;NA&gt;        &lt;NA&gt;
+##    [9]            &lt;NA&gt;                &lt;NA&gt;        &lt;NA&gt;
+##   [10]            &lt;NA&gt;                &lt;NA&gt;           2
+##                            Parent   transcript_id transcript_support_level
+##                   &lt;CharacterList&gt;     &lt;character&gt;              &lt;character&gt;
+##    [1]                       &lt;NA&gt;            &lt;NA&gt;                     &lt;NA&gt;
+##    [2]                       &lt;NA&gt;            &lt;NA&gt;                     &lt;NA&gt;
+##    [3]       gene:ENSG00000178591 ENST00000608838                        2
+##    [4] transcript:ENST00000608838            &lt;NA&gt;                     &lt;NA&gt;
+##    [5] transcript:ENST00000608838            &lt;NA&gt;                     &lt;NA&gt;
+##    [6]       gene:ENSG00000178591 ENST00000382410                        1
+##    [7] transcript:ENST00000382410            &lt;NA&gt;                     &lt;NA&gt;
+##    [8] transcript:ENST00000382410            &lt;NA&gt;                     &lt;NA&gt;
+##    [9] transcript:ENST00000382410            &lt;NA&gt;                     &lt;NA&gt;
+##   [10] transcript:ENST00000382410            &lt;NA&gt;                     &lt;NA&gt;
+##        constitutive ensembl_end_phase ensembl_phase         exon_id
+##         &lt;character&gt;       &lt;character&gt;   &lt;character&gt;     &lt;character&gt;
+##    [1]         &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;            &lt;NA&gt;
+##    [2]         &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;            &lt;NA&gt;
+##    [3]         &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;            &lt;NA&gt;
+##    [4]            0                -1            -1 ENSE00003702629
+##    [5]            0                -1            -1 ENSE00003705060
+##    [6]         &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;            &lt;NA&gt;
+##    [7]            0                 1             0 ENSE00001491993
+##    [8]         &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;            &lt;NA&gt;
+##    [9]         &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;            &lt;NA&gt;
+##   [10]            0                -1             1 ENSE00001491984
+##               rank      ccdsid         tag      protein_id external_name
+##        &lt;character&gt; &lt;character&gt; &lt;character&gt;     &lt;character&gt;   &lt;character&gt;
+##    [1]        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##    [2]        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##    [3]        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##    [4]           1        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##    [5]           2        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##    [6]        &lt;NA&gt; CCDS12989.2       basic            &lt;NA&gt;          &lt;NA&gt;
+##    [7]           1        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##    [8]        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt; ENSP00000371847          &lt;NA&gt;
+##    [9]        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt; ENSP00000371847          &lt;NA&gt;
+##   [10]           2        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##   -------
+##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</code></pre>
+<pre class="r"><code># Make a logical vector of the indices to shift
+
+regions_to_shift&lt;-((seqnames(gff)==&quot;20&quot;)&amp;(start(gff)&gt;=87250)&amp;(start(gff)&lt;=96005))
+
+number_to_shift=7e2
+#shift those
+shifted_beds&lt;-shift(gff[regions_to_shift],number_to_shift)
+
+#replace them in the original
+gff[regions_to_shift]&lt;-shifted_beds
+head(gff,10)</code></pre>
+<pre><code>## GRanges object with 10 ranges and 24 metadata columns:
+##        seqnames      ranges strand |         source       type     score
+##           &lt;Rle&gt;   &lt;IRanges&gt;  &lt;Rle&gt; |       &lt;factor&gt;   &lt;factor&gt; &lt;numeric&gt;
+##    [1]       20  1-64444167      * |        Ensembl chromosome      &lt;NA&gt;
+##    [2]       20 87950-97794      + | ensembl_havana       gene      &lt;NA&gt;
+##    [3]       20 87950-97794      + |         havana    lnc_RNA      &lt;NA&gt;
+##    [4]       20 87950-88059      + |         havana       exon      &lt;NA&gt;
+##    [5]       20 96705-97794      + |         havana       exon      &lt;NA&gt;
+##    [6]       20 88410-97233      + | ensembl_havana       mRNA      &lt;NA&gt;
+##    [7]       20 88410-88467      + | ensembl_havana       exon      &lt;NA&gt;
+##    [8]       20 88410-88467      + | ensembl_havana        CDS      &lt;NA&gt;
+##    [9]       20 96705-97117      + | ensembl_havana        CDS      &lt;NA&gt;
+##   [10]       20 96705-97233      + | ensembl_havana       exon      &lt;NA&gt;
+##            phase                         ID                         Alias
+##        &lt;integer&gt;                &lt;character&gt;               &lt;CharacterList&gt;
+##    [1]      &lt;NA&gt;              chromosome:20 CM000682.2,chr20,NC_000020.11
+##    [2]      &lt;NA&gt;       gene:ENSG00000178591                              
+##    [3]      &lt;NA&gt; transcript:ENST00000608838                              
+##    [4]      &lt;NA&gt;                       &lt;NA&gt;                              
+##    [5]      &lt;NA&gt;                       &lt;NA&gt;                              
+##    [6]      &lt;NA&gt; transcript:ENST00000382410                              
+##    [7]      &lt;NA&gt;                       &lt;NA&gt;                              
+##    [8]         0        CDS:ENSP00000371847                              
+##    [9]         2        CDS:ENSP00000371847                              
+##   [10]      &lt;NA&gt;                       &lt;NA&gt;                              
+##                   Name              biotype
+##            &lt;character&gt;          &lt;character&gt;
+##    [1]            &lt;NA&gt;                 &lt;NA&gt;
+##    [2]         DEFB125       protein_coding
+##    [3]     DEFB125-202 processed_transcript
+##    [4] ENSE00003702629                 &lt;NA&gt;
+##    [5] ENSE00003705060                 &lt;NA&gt;
+##    [6]     DEFB125-201       protein_coding
+##    [7] ENSE00001491993                 &lt;NA&gt;
+##    [8]            &lt;NA&gt;                 &lt;NA&gt;
+##    [9]            &lt;NA&gt;                 &lt;NA&gt;
+##   [10] ENSE00001491984                 &lt;NA&gt;
+##                                                  description
+##                                                  &lt;character&gt;
+##    [1]                                                  &lt;NA&gt;
+##    [2] defensin beta 125 [Source:HGNC Symbol;Acc:HGNC:18105]
+##    [3]                                                  &lt;NA&gt;
+##    [4]                                                  &lt;NA&gt;
+##    [5]                                                  &lt;NA&gt;
+##    [6]                                                  &lt;NA&gt;
+##    [7]                                                  &lt;NA&gt;
+##    [8]                                                  &lt;NA&gt;
+##    [9]                                                  &lt;NA&gt;
+##   [10]                                                  &lt;NA&gt;
+##                gene_id          logic_name     version
+##            &lt;character&gt;         &lt;character&gt; &lt;character&gt;
+##    [1]            &lt;NA&gt;                &lt;NA&gt;        &lt;NA&gt;
+##    [2] ENSG00000178591 ensembl_havana_gene           6
+##    [3]            &lt;NA&gt;                &lt;NA&gt;           1
+##    [4]            &lt;NA&gt;                &lt;NA&gt;           1
+##    [5]            &lt;NA&gt;                &lt;NA&gt;           1
+##    [6]            &lt;NA&gt;                &lt;NA&gt;           2
+##    [7]            &lt;NA&gt;                &lt;NA&gt;           1
+##    [8]            &lt;NA&gt;                &lt;NA&gt;        &lt;NA&gt;
+##    [9]            &lt;NA&gt;                &lt;NA&gt;        &lt;NA&gt;
+##   [10]            &lt;NA&gt;                &lt;NA&gt;           2
+##                            Parent   transcript_id transcript_support_level
+##                   &lt;CharacterList&gt;     &lt;character&gt;              &lt;character&gt;
+##    [1]                       &lt;NA&gt;            &lt;NA&gt;                     &lt;NA&gt;
+##    [2]                       &lt;NA&gt;            &lt;NA&gt;                     &lt;NA&gt;
+##    [3]       gene:ENSG00000178591 ENST00000608838                        2
+##    [4] transcript:ENST00000608838            &lt;NA&gt;                     &lt;NA&gt;
+##    [5] transcript:ENST00000608838            &lt;NA&gt;                     &lt;NA&gt;
+##    [6]       gene:ENSG00000178591 ENST00000382410                        1
+##    [7] transcript:ENST00000382410            &lt;NA&gt;                     &lt;NA&gt;
+##    [8] transcript:ENST00000382410            &lt;NA&gt;                     &lt;NA&gt;
+##    [9] transcript:ENST00000382410            &lt;NA&gt;                     &lt;NA&gt;
+##   [10] transcript:ENST00000382410            &lt;NA&gt;                     &lt;NA&gt;
+##        constitutive ensembl_end_phase ensembl_phase         exon_id
+##         &lt;character&gt;       &lt;character&gt;   &lt;character&gt;     &lt;character&gt;
+##    [1]         &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;            &lt;NA&gt;
+##    [2]         &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;            &lt;NA&gt;
+##    [3]         &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;            &lt;NA&gt;
+##    [4]            0                -1            -1 ENSE00003702629
+##    [5]            0                -1            -1 ENSE00003705060
+##    [6]         &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;            &lt;NA&gt;
+##    [7]            0                 1             0 ENSE00001491993
+##    [8]         &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;            &lt;NA&gt;
+##    [9]         &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;            &lt;NA&gt;
+##   [10]            0                -1             1 ENSE00001491984
+##               rank      ccdsid         tag      protein_id external_name
+##        &lt;character&gt; &lt;character&gt; &lt;character&gt;     &lt;character&gt;   &lt;character&gt;
+##    [1]        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##    [2]        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##    [3]        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##    [4]           1        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##    [5]           2        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##    [6]        &lt;NA&gt; CCDS12989.2       basic            &lt;NA&gt;          &lt;NA&gt;
+##    [7]           1        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##    [8]        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt; ENSP00000371847          &lt;NA&gt;
+##    [9]        &lt;NA&gt;        &lt;NA&gt;        &lt;NA&gt; ENSP00000371847          &lt;NA&gt;
+##   [10]           2        &lt;NA&gt;        &lt;NA&gt;            &lt;NA&gt;          &lt;NA&gt;
+##   -------
+##   seqinfo: 1 sequence from an unspecified genome; no seqlengths</code></pre>
+<pre class="r"><code>export(gff,&quot;./sample_file/Homo_sapiens.GRCh38.96.chromosome.20_shifted.gff3&quot;)</code></pre>
+</div>
 
 
 

@@ -8,6 +8,7 @@ output:
 ```{r message=FALSE, echo=FALSE}
 library(rtracklayer)
 ```
+## For shifting BEDs
 Import sample BED.
 If your BED has more than 3 columns (check it with head file.bed in terminal) This won't work! Don't know why!
 ```{r}
@@ -18,7 +19,7 @@ head(bed,10)
 2- shift them some number.
 3- And replace it.
 ```{r}
-number_to_shift=2e5 ##200kb
+number_to_shift=7e2 ##200kb
 
 
 shifted_beds<-shift(bed[(seqnames(bed)=="chr1")&start(bed)>=779600&start(bed)<=1e6],number_to_shift)
@@ -33,4 +34,26 @@ Note that idices>5 has been shifted
 export(bed,"./sample_file/shifted.bed")
 ```
 
+## For GFF files
+
+```{r}
+gff<-import("./sample_file/Homo_sapiens.GRCh38.96.chromosome.20.gff3")
+head(gff,10)
+```
+```{r}
+# Make a logical vector of the indices to shift
+
+regions_to_shift<-((seqnames(gff)=="20")&(start(gff)>=87250)&(start(gff)<=96005))
+
+number_to_shift=7e2
+#shift those
+shifted_beds<-shift(gff[regions_to_shift],number_to_shift)
+
+#replace them in the original
+gff[regions_to_shift]<-shifted_beds
+head(gff,10)
+```
+```{r}
+export(gff,"./sample_file/Homo_sapiens.GRCh38.96.chromosome.20_shifted.gff3")
+```
 
