@@ -1,0 +1,36 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r message=FALSE, echo=FALSE}
+library(rtracklayer)
+```
+Import sample BED.
+If your BED has more than 3 columns (check it with head file.bed in terminal) This won't work! Don't know why!
+```{r}
+bed<-import("./sample_file/H3K4me3_ENCFF148POZ_hg38.bed")
+head(bed,10)
+```
+1- I will use subsetting to extract some of the beds.
+2- shift them some number.
+3- And replace it.
+```{r}
+number_to_shift=2e5 ##200kb
+
+
+shifted_beds<-shift(bed[(seqnames(bed)=="chr1")&start(bed)>=779600&start(bed)<=1e6],number_to_shift)
+
+bed[(seqnames(bed)=="chr1")&start(bed)>=779600&start(bed)<=1e6]<-shifted_beds
+head(bed,10)
+```
+
+Note that idices>5 has been shifted 
+
+```{r}
+export(bed,"./sample_file/shifted.bed")
+```
+
+
