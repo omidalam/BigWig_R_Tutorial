@@ -1,0 +1,80 @@
+---
+title: "scatterplot"
+author: "omidalam"
+date: "6/23/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+```
+#Import files
+```{r}
+library(rtracklayer) #package for import and export
+#Part of Bioconductor
+```
+
+```{r}
+rep1 = import("~/box_sync/Andy_lab/Projects/U54_student_meeting/summary_paper/reference_data/k562/TSA_Seq/25kb/K562_SON_TSA_25kb_hg38_rep1_201911condE.bw")
+rep2 <- import("~/box_sync/Andy_lab/Projects/U54_student_meeting/summary_paper/reference_data/k562/TSA_Seq/25kb/K562_SON_TSA_25kb_hg38_rep2_201610condE.bw")
+```
+
+```{r}
+
+head(width(rep1))
+length(rep1)
+```
+```{r}
+head(width(rep2))
+length(rep2)
+```
+```{r}
+length(rep1)==length(rep2)
+```
+
+```{r}
+rep1$score[1:10]==rep1[1:10]$score
+```
+
+```{r}
+plot(rep1[1:1000]$score,rep2$score[1:1000],pch=20)
+```
+```{r}
+library(ggplot2)
+```
+```{r}
+reps = data.frame(r1=rep1$score,
+                  r2=rep2$score)
+head(reps)
+print(head(reps$chr))
+```
+
+```{r}
+ggplot(reps,aes(r1,r2))+geom_point()
+```
+```{r}
+ggplot(reps,aes(r1,r2))+geom_bin2d()
+```
+```{r}
+ggplot(reps,aes(r1,r2))+geom_bin2d(bins=50)
+```
+```{r}
+filter = reps$r1 != 0 & reps$r2 != 0
+reps_filtered = reps[filter,]
+table(filter)
+```
+
+```{r}
+dim(reps_filtered)
+```
+```{r}
+plot1 = ggplot(reps_filtered,aes(x=r1,y=r2))+geom_bin2d(bins=50)
+```
+```{r}
+plot_pearson = round(cor(reps_filtered$r1,reps_filtered$r2,method="spearman"), 2)
+plot1 + annotate("text", label = paste("pearson correlation",plot_pearson) , x = -2, y = 2, size = 6, colour = "red")+
+  xlab("SON TSA rep1") + ylab("SON TSA rep2") + theme_bw()
+```
+
